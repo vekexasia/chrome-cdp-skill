@@ -36,6 +36,13 @@ function sockPath(targetId) {
 }
 
 function getWsUrl() {
+  const configuredWsUrl = process.env.CDP_WS_URL?.trim();
+  if (configuredWsUrl) {
+    if (!/^wss?:\/\//.test(configuredWsUrl)) {
+      throw new Error('CDP_WS_URL must start with ws:// or wss://');
+    }
+    return configuredWsUrl;
+  }
   const home = homedir();
   // macOS: ~/Library/Application Support/<name>/DevToolsActivePort
   const macBrowsers = [
@@ -723,6 +730,8 @@ async function stopDaemons(targetPrefix) {
 const USAGE = `cdp - lightweight Chrome DevTools Protocol CLI (no Puppeteer)
 
 Usage: cdp <command> [args]
+
+  CDP_WS_URL=ws://...                  Optional explicit Chrome DevTools WebSocket URL
 
   list                              List open pages (shows unique target prefixes)
   snap  <target>                    Accessibility tree snapshot
