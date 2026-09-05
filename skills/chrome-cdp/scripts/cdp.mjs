@@ -5,7 +5,7 @@
 //
 // Per-tab persistent daemon: page commands go through a daemon that holds
 // the CDP session open. Chrome's "Allow debugging" modal fires once per
-// daemon (= once per tab). Daemons auto-exit after 20min idle.
+// daemon (= once per tab). Daemons auto-exit after 8h idle.
 
 import { readFileSync, writeFileSync, unlinkSync, existsSync, mkdirSync } from 'fs';
 import { homedir } from 'os';
@@ -15,7 +15,7 @@ import net from 'net';
 
 const TIMEOUT = 15000;
 const NAVIGATION_TIMEOUT = 30000;
-const IDLE_TIMEOUT = 20 * 60 * 1000;
+const IDLE_TIMEOUT = 8 * 60 * 60 * 1000;
 const DAEMON_CONNECT_RETRIES = 20;
 const DAEMON_CONNECT_DELAY = 300;
 const MIN_TARGET_PREFIX_LEN = 8;

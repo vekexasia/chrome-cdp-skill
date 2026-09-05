@@ -15,18 +15,18 @@ Lightweight Chrome DevTools Protocol CLI. Connects directly via WebSocket — no
 
 ## Commands
 
-All commands use `scripts/cdp.mjs`. The `<target>` is a **unique** targetId prefix from `list`; copy the full prefix shown in the `list` output (for example `6BE827FA`). The CLI rejects ambiguous prefixes.
+All commands use `cdp` (symlink to `scripts/cdp.mjs` in PATH). The `<target>` is a **unique** targetId prefix from `list`; copy the full prefix shown in the `list` output (for example `6BE827FA`). The CLI rejects ambiguous prefixes.
 
 ### List open pages
 
 ```bash
-scripts/cdp.mjs list
+cdp list
 ```
 
 ### Take a screenshot
 
 ```bash
-scripts/cdp.mjs shot <target> [file]    # default: screenshot-<target>.png in runtime dir
+cdp shot <target> [file]    # default: screenshot-<target>.png in runtime dir
 ```
 
 Captures the **viewport only**. Scroll first with `eval` if you need content below the fold. Output includes the page's DPR and coordinate conversion hint (see **Coordinates** below).
@@ -34,13 +34,13 @@ Captures the **viewport only**. Scroll first with `eval` if you need content bel
 ### Accessibility tree snapshot
 
 ```bash
-scripts/cdp.mjs snap <target>
+cdp snap <target>
 ```
 
 ### Evaluate JavaScript
 
 ```bash
-scripts/cdp.mjs eval <target> <expr>
+cdp eval <target> <expr>
 ```
 
 > **Watch out:** avoid index-based selection (`querySelectorAll(...)[i]`) across multiple `eval` calls when the DOM can change between them (e.g. after clicking Ignore, card indices shift). Collect all data in one `eval` or use stable selectors.
@@ -48,16 +48,16 @@ scripts/cdp.mjs eval <target> <expr>
 ### Other commands
 
 ```bash
-scripts/cdp.mjs html    <target> [selector]   # full page or element HTML
-scripts/cdp.mjs nav     <target> <url>         # navigate and wait for load
-scripts/cdp.mjs net     <target>               # resource timing entries
-scripts/cdp.mjs click   <target> <selector>    # click element by CSS selector
-scripts/cdp.mjs clickxy <target> <x> <y>       # click at CSS pixel coords
-scripts/cdp.mjs type    <target> <text>         # Input.insertText at current focus; works in cross-origin iframes unlike eval
-scripts/cdp.mjs loadall <target> <selector> [ms]  # click "load more" until gone (default 1500ms between clicks)
-scripts/cdp.mjs evalraw <target> <method> [json]  # raw CDP command passthrough
-scripts/cdp.mjs open    [url]                  # open new tab (each triggers Allow prompt)
-scripts/cdp.mjs stop    [target]               # stop daemon(s)
+cdp html    <target> [selector]   # full page or element HTML
+cdp nav     <target> <url>         # navigate and wait for load
+cdp net     <target>               # resource timing entries
+cdp click   <target> <selector>    # click element by CSS selector
+cdp clickxy <target> <x> <y>       # click at CSS pixel coords
+cdp type    <target> <text>         # Input.insertText at current focus; works in cross-origin iframes unlike eval
+cdp loadall <target> <selector> [ms]  # click "load more" until gone (default 1500ms between clicks)
+cdp evalraw <target> <method> [json]  # raw CDP command passthrough
+cdp open    [url]                  # open new tab (each triggers Allow prompt)
+cdp stop    [target]               # stop daemon(s)
 ```
 
 ## Coordinates
@@ -73,5 +73,6 @@ CSS px = screenshot image px / DPR
 ## Tips
 
 - Prefer `snap --compact` over `html` for page structure.
+- Prefer a single script with multiple changes over several single click or clickxy in different tool calls.
 - Use `type` (not eval) to enter text in cross-origin iframes — `click`/`clickxy` to focus first, then `type`.
-- Chrome shows an "Allow debugging" modal once per tab on first access. A background daemon keeps the session alive so subsequent commands need no further approval. Daemons auto-exit after 20 minutes of inactivity.
+- Chrome shows an "Allow debugging" modal once per tab on first access. A background daemon keeps the session alive so subsequent commands need no further approval. Daemons auto-exit after 8 hours of inactivity.
